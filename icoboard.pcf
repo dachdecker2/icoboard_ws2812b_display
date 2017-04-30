@@ -1,0 +1,43 @@
+
+set_io --warn-no-port clk_100mhz R9
+
+set_io --warn-no-port led1 C8
+set_io --warn-no-port led2 F7
+set_io --warn-no-port led3 K9
+
+set_io --warn-no-port btn1 K11
+set_io --warn-no-port btn2 P13
+
+set_io --warn-no-port rpi_ice_mosi A6
+set_io --warn-no-port rpi_ice_miso A7
+set_io --warn-no-port rpi_ice_clk H11
+#set_io --warn-no-port rpi_ice_ss D4    # not found
+set_io --warn-no-port rpi_ice_ss2 C9    # RPi GPIO 38
+set_io --warn-no-port rpi_ice_ss C10   # RPi GPIO 40
+
+# missing lines: ports unknown
+
+set_io --warn-no-port pmod1_1   D8
+set_io --warn-no-port pmod1_4   B3
+set_io --warn-no-port pmod1_8   A2
+
+set_io --warn-no-port pmod2_1   A9
+set_io --warn-no-port pmod2_2   B9
+set_io --warn-no-port pmod2_3   A10
+set_io --warn-no-port pmod2_4   B10
+set_io --warn-no-port pmod2_7   A11
+set_io --warn-no-port pmod2_8   B11
+set_io --warn-no-port pmod2_9   A16
+set_io --warn-no-port pmod2_10  A15
+
+# pmod3: ?
+
+set_io --warn-no-port pmod4_1   R14
+set_io --warn-no-port pmod4_2   T14
+set_io --warn-no-port pmod4_3   T13
+set_io --warn-no-port pmod4_4   T11
+set_io --warn-no-port pmod4_7   T10
+set_io --warn-no-port pmod4_8   T9
+set_io --warn-no-port pmod4_9   T16
+set_io --warn-no-port pmod4_10  T15
+
