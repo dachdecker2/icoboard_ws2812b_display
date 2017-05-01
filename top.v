@@ -124,7 +124,8 @@ module top (
 	wire [3:0] ws2812b_debug_info;
 	ws2812b_out_module #(.CYCLES_SHORT(3), //   3 @ 9 MHz
 	                     .CYCLES_LONG(5),  //   5 @ 9 MHz
-	                     .CYCLES_RET(450)) // 450 @ 9 MHz
+	                     .CYCLES_RET(0),   // 450 @ 9 MHz, clk_fps will do this job
+	                     .CYCLES_CNT_WIDTH(3))
 	ws2812b_out_int_01 (
                      .clk(clk),
                      .resetn(resetn),
