@@ -71,9 +71,9 @@ module top (
 
 	// ws2812b output
 	localparam LEDCOUNT = 36;
-	reg  [LEDCOUNT-1:0] red   = 36'b1001_00000000_00000000_00000000_00000001;
-	reg  [LEDCOUNT-1:0] green = 36'b1010_00000000_00000000_00000000_00000010;
-	reg  [LEDCOUNT-1:0] blue  = 36'b1100_00000000_00000000_00000000_00000100;
+	reg  [LEDCOUNT-1:0] red   = 36'b1000_10000001_10000001_10000001_10000001;
+	reg  [LEDCOUNT-1:0] green = 36'b1000_00000000_00000000_00000000_00000000;
+	reg  [LEDCOUNT-1:0] blue  = 36'b1000_00000000_00000000_00000000_00000000;
 	reg  [LEDCOUNT-1:0] red_int;
 	reg  [LEDCOUNT-1:0] green_int;
 	reg  [LEDCOUNT-1:0] blue_int;
@@ -137,11 +137,6 @@ module top (
 	                );
 	assign pmod1_1 = ws2812b_data;
 
-	assign {pmod4_4, pmod4_3, pmod4_2, pmod4_1,
-	        pmod2_4, pmod2_3, pmod2_2, pmod2_1} = //debug_info;
-	        {ws2812b_debug_info[3:0],
-	         fps_clk, next_LED, start, resetn};
-
 
 	always @(posedge clk) begin
 		if (!resetn) begin
@@ -156,27 +151,50 @@ module top (
 
 	// Simple Example Design
 
-/*	// instatiation of a SPI slave
+	// instatiation of a SPI slave
 	localparam CPOL = 0;
 	localparam CPHA = 0;
-	localparam LSBFIRST = 1;
+	localparam LSBFIRST = 0;
 
 	wire [7:0] spi_value;
-	wire       spi_first_byte;
+	wire [7:0] spi_debug_info;
+	wire [0:0] spi_first_byte;
+	wire [0:0] spi_done;
+
+	always @(posedge clk) begin
+		if (!resetn) begin
+			
+		end
+		else begin
+			if (spi_done) begin
+				green[7:0] <= spi_value;
+				blue[15:8] <= green[7:0];
+				green[23:16] <= blue[15:8];
+				blue[31:24] <= green[23:16];
+			end
+		end
+	end
 
 	spi_slave #(.CPOL(CPOL),
 	            .CPHA(CPHA),
 	            .LSBFIRST(LSBFIRST))
-	spi_slave_int (.clk(clk_25mhz),
+	spi_slave_int (.clk(clk),
+	               .resetn(resetn),
 	               .spi_clk(rpi_ice_clk),
 	               .spi_mosi(rpi_ice_mosi),
 	               .spi_cs(rpi_ice_ss),
 	               .read_value(spi_value),
 	               .done(spi_done),
 	               .first_byte(spi_first_byte)
-//	               , .debug_info(spi_debug_info)
+	               , .debug_info(spi_debug_info)
 	               ); // */
 
+	assign {pmod4_4, pmod4_3, pmod4_2, pmod4_1,
+	        pmod2_4, pmod2_3, pmod2_2, pmod2_1} = //debug_info;
+//	        {spi_debug_info[3:0],
+	        {spi_debug_info[7:4],
+	         rpi_ice_ss, rpi_ice_mosi, rpi_ice_clk, resetn};
+
 	// assign pins to value of leds
-	assign {led3, led2, led1} = {ws2812b_data, resetn, !fps_clk};
+	assign {led3, led2, led1} = {rpi_ice_ss, rpi_ice_ss2, !fps_clk};
 endmodule
