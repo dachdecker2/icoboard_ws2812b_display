@@ -160,6 +160,8 @@ module top (
 	wire [7:0] spi_debug_info;
 	wire [0:0] spi_first_byte;
 	wire [0:0] spi_done;
+	wire [0:0] spi_timeout;
+	reg [31:0] spi_buffer;
 
 	always @(posedge clk) begin
 		if (!resetn) begin
@@ -167,10 +169,13 @@ module top (
 		end
 		else begin
 			if (spi_done) begin
-				green[7:0] <= spi_value;
-				blue[15:8] <= green[7:0];
-				green[23:16] <= blue[15:8];
-				blue[31:24] <= green[23:16];
+				spi_buffer <= {spi_buffer[23:0], spi_value};
+			end
+			if (spi_timeout) begin
+				green[ 7: 0] <= spi_buffer[ 7: 0];
+				blue [15: 8] <= spi_buffer[15: 8];
+				green[23:16] <= spi_buffer[23:15];
+				blue [31:24] <= spi_buffer[31:24];
 			end
 		end
 	end
@@ -185,9 +190,10 @@ module top (
 	               .spi_cs(rpi_ice_ss),
 	               .read_value(spi_value),
 	               .done(spi_done),
-	               .first_byte(spi_first_byte)
-	               , .debug_info(spi_debug_info)
-	               ); // */
+	               .timeout_expired(spi_timeout),
+	               .first_byte(spi_first_byte),
+	               .debug_info(spi_debug_info)
+	               );
 
 	assign {pmod4_4, pmod4_3, pmod4_2, pmod4_1,
 	        pmod2_4, pmod2_3, pmod2_2, pmod2_1} = //debug_info;
