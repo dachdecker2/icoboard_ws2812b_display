@@ -23,8 +23,7 @@ help:
 	@echo
 
 top.blif: top.v spi.v ws2812b_out.v
-#	yosys -p 'synth_ice40 -blif top.blif' top.v spi.v # ws2812b_out.v 2> yosys.err > yosys.out
-	yosys -p 'synth_ice40 -blif top.blif' top.v spi.v | tee yosys.out
+	yosys -p 'synth_ice40 -blif top.blif' top.v spi.v ws2812b_out.v > yosys.out
 	sed "/Warning/p" -n < yosys.out > yosys.warnings
 	cat yosys.warnings
 

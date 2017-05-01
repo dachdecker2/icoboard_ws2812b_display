@@ -34,7 +34,7 @@ module ws2812b_out_module (
                 // wait state: consume the desired time
                 counter <= counter - 1;
             end else begin
-                if ((bitnum == 0) && (!ws2812b_data)) begin
+                if (!bitnum && !ws2812b_data) begin
                     if (bitstream_available) begin
                         // communicate to "caller"
                         bitstream_read <= 1; // state bitstream to be read for this cycle
@@ -42,21 +42,21 @@ module ws2812b_out_module (
                         // start output
                         ws2812b_data <= 1;
                         bitnum <= 24;
-                        counter <= bitstream_int[0] ? CYCLES_LONG : CYCLES_SHORT;
+                        counter <= bitstream[23] ? CYCLES_LONG : CYCLES_SHORT;
                     end else begin
                         // no new bitstream available -> trigger output of ws2812b LEDs
                         ws2812b_data <= 0;
                         counter <= CYCLES_RET;
                     end
-                end else if (bitnum > 0) begin
+                end else if (bitnum) begin
                     // output the remainder of bitstream
                     if (!ws2812b_data) begin
                         ws2812b_data <= 1;
-                        counter <= bitstream_int[0] ? CYCLES_LONG : CYCLES_SHORT;
+                        counter <= bitstream_int[23] ? CYCLES_LONG : CYCLES_SHORT;
                     end else begin
                         ws2812b_data <= 0;
-                        counter <= (bitstream_int[0]) ? CYCLES_SHORT : CYCLES_LONG;
-                        bitstream_int <= {bitstream_int[0], bitstream_int[23:1]};
+                        counter <= (bitstream_int[23]) ? CYCLES_SHORT : CYCLES_LONG;
+                        bitstream_int <= {bitstream_int[22:0], bitstream_int[23]};
                         bitnum <= bitnum - 1;
                     end
                 end

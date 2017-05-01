@@ -1,5 +1,5 @@
 
-set_io --warn-no-port clk_100mhz R9
+set_io --warn-no-port clk_12mhz R9
 
 set_io --warn-no-port led1 C8
 set_io --warn-no-port led2 F7
