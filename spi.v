@@ -21,18 +21,17 @@ module spi_slave (
 	parameter CPHA = 0;
 	parameter LSBFIRST = 1;
 	parameter TIMEOUT_CYCLES = 9000;
-	parameter TIMEOUT_WIDTH = 14;
 
-	reg  [3:0] state; // idle, start condition, d0, d1, ..., d7
-	reg  [7:0] value_int;
-	reg  [7:0] read_value;
-	reg  [0:0] done;
-	reg  [0:0] first_byte; // inform caller that this is a new transmission
-	wire [0:0] sample;        // used as name for the "sample" condition is True
-	wire [0:0] write;         // used as name for the "write" condition is True
+	reg  [3:0] state = 0;      // idle, start condition, d0, d1, ..., d7
+	reg  [7:0] value_int = 0;
+	reg  [7:0] read_value = 0;
+	reg  [0:0] done = 0;
+	reg  [0:0] first_byte = 0; // inform caller that this is a new transmission
+	wire [0:0] sample;         // used as name for the "sample" condition is True
+	wire [0:0] write;          // used as name for the "write" condition is True
 	reg  [0:0] spi_clk_reg;    // registered value of spi_clk
 	reg  [0:0] spi_clk_pre;    // previous value of spi_clk
-	reg  [0:0] spi_mosi_reg;    // registered value of spi_mosi
+	reg  [0:0] spi_mosi_reg;   // registered value of spi_mosi
 	reg  [0:0] reset_timeout;
 
 	assign sample =    (CPOL ^  (CPHA ^ spi_clk_reg))
@@ -41,15 +40,9 @@ module spi_slave (
 	assign write  =    (CPOL ^ !(CPHA ^ spi_clk_reg))
 	                && (CPOL ^  (CPHA ^ spi_clk_pre));
 
-	// for simulation: initialize to valid internal values
-	initial begin
-		state <= 0;
-		done <= 0;
-		value_int <= 0;
-	end
 
-	reg [TIMEOUT_WIDTH-1:0] timeout_counter = 0;
-	reg [0:0]               timeout_expired = 1;
+	reg [$clog2(TIMEOUT_CYCLES)-1:0] timeout_counter = 0;
+	reg                        [0:0] timeout_expired = 1;
 
 	// actual implementation
 	always @(posedge clk) begin

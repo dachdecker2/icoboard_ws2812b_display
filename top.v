@@ -130,6 +130,7 @@ module top (
 	localparam CPOL = 0;
 	localparam CPHA = 0;
 	localparam LSBFIRST = 0;
+	localparam SPI_TIMEOUT_us = 1000; // when to finish a transmitted frame
 
 	wire [7:0] spi_value;
 	wire [7:0] spi_debug_info;
@@ -155,9 +156,10 @@ module top (
 		end
 	end
 
-	spi_slave #(.CPOL     (CPOL),
-	            .CPHA     (CPHA),
-	            .LSBFIRST (LSBFIRST))
+	spi_slave #(.CPOL           (CPOL),
+	            .CPHA           (CPHA),
+	            .LSBFIRST       (LSBFIRST),
+	            .TIMEOUT_CYCLES ((FCLK * SPI_TIMEOUT_us) / 1000000))
 	spi_slave_int (.clk             (clk),
 	               .resetn          (resetn),
 	               .spi_clk         (rpi_ice_clk),
