@@ -92,6 +92,6 @@ module spi_slave (
 		end
 	end
 
-	assign debug_info[7:4] = {state[3:0]};
+	assign debug_info[7:4] = state[3:0];
 	assign debug_info[3:0] = value_int[3:0];
 endmodule

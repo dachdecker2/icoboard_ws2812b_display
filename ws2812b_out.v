@@ -10,14 +10,16 @@ module ws2812b_out_module (
     output reg [3:0] debug_info
 );
 
-    parameter CYCLES_SHORT = 3; //  ~0,44 us @ 9 MHz
-    parameter CYCLES_LONG = 5;  //  ~0,66 us @ 9 MHz
-    parameter CYCLES_RET = 450; //  50,0  us @ 9 MHz
-    parameter CYCLES_CNT_WIDTH = 9; // _must_ fit the parameters above
+    parameter CYCLES_SHORT =   3; //  ~0,44 us @ 9 MHz
+    parameter CYCLES_LONG  =   5; //  ~0,66 us @ 9 MHz
+    parameter CYCLES_RET   = 450; //  50,0  us @ 9 MHz
+
+    localparam CYCLES_WIDTH = $clog2(CYCLES_RET > CYCLES_LONG ? CYCLES_RET
+                                                              : CYCLES_LONG);
 
     // keep an eye on the length of bitnum
     reg  [4:0] bitnum = 0;     // 0 .. 23
-    reg  [CYCLES_CNT_WIDTH-1:0] counter = 0;    // 0 .. CYCLES_RET
+    reg  [CYCLES_WIDTH-1:0] counter = 0;    // 0 .. CYCLES_RET
     reg  [23:0] bitstream_int; // internal copy of the txed LED data
 
     wire [3:0] debug_info;
