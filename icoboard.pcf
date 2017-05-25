@@ -20,17 +20,17 @@ set_io --warn-no-port rpi_ice_ss2 D5   # RPi GPIO 6
 # missing lines: ports unknown
 
 set_io --warn-no-port pmod1_1   D8
-set_io --warn-no-port pmod1_4   B3
-set_io --warn-no-port pmod1_8   A2
+#set_io --warn-no-port pmod1_4   B3
+#set_io --warn-no-port pmod1_8   A2
 
-set_io --warn-no-port pmod2_1   A9  # IO213
-set_io --warn-no-port pmod2_2   B9  # IO218
-set_io --warn-no-port pmod2_3   A10 # IO227
-set_io --warn-no-port pmod2_4   B10 # IO216
-set_io --warn-no-port pmod2_7   A11 # IO207
-set_io --warn-no-port pmod2_8   B11 # IO208
-set_io --warn-no-port pmod2_9   A16 # IO223
-set_io --warn-no-port pmod2_10  A15 # IO214
+#set_io --warn-no-port pmod2_1   A9  # IO213
+#set_io --warn-no-port pmod2_2   B9  # IO218
+#set_io --warn-no-port pmod2_3   A10 # IO227
+#set_io --warn-no-port pmod2_4   B10 # IO216
+#set_io --warn-no-port pmod2_7   A11 # IO207
+#set_io --warn-no-port pmod2_8   B11 # IO208
+#set_io --warn-no-port pmod2_9   A16 # IO223
+#set_io --warn-no-port pmod2_10  A15 # IO214
 
 # pmod3: ?
 
@@ -43,16 +43,59 @@ set_io --warn-no-port pmod4_8   T9
 set_io --warn-no-port pmod4_9   T16
 set_io --warn-no-port pmod4_10  T15
 
-set_io --warn-no-port GPIO0  D9  # IO193
-set_io --warn-no-port GPIO4  C9  # IO191
-set_io --warn-no-port GPIO5  C10 # IO185
-set_io --warn-no-port GPIO2  D6  # IO212
-set_io --warn-no-port GPIO7  C7  # IO206
-set_io --warn-no-port GPIO8  K11 # IO103
-set_io --warn-no-port GPIO1  D5  # IO219
-set_io --warn-no-port GPIO6  C6  # IO209
-set_io --warn-no-port GPIO3  D7  # IO210
-set_io --warn-no-port RPI22  P13 # IO104
-set_io --warn-no-port RPI26  D4  # IO224
-set_io --warn-no-port RPI08  T15 # RPI_UART_TXD
-set_io --warn-no-port RPI10  T15 # RPI_UART_RXD
+#set_io --warn-no-port GPIO0  D9  # IO193
+#set_io --warn-no-port GPIO4  C9  # IO191
+#set_io --warn-no-port GPIO5  C10 # IO185
+#set_io --warn-no-port GPIO2  D6  # IO212
+#set_io --warn-no-port GPIO7  C7  # IO206
+#set_io --warn-no-port GPIO8  K11 # IO103
+#set_io --warn-no-port GPIO1  D5  # IO219
+#set_io --warn-no-port GPIO6  C6  # IO209
+#set_io --warn-no-port GPIO3  D7  # IO210
+#set_io --warn-no-port RPI22  P13 # IO104
+#set_io --warn-no-port RPI26  D4  # IO224
+#set_io --warn-no-port RPI08  T15 # RPI_UART_TXD
+#set_io --warn-no-port RPI10  T15 # RPI_UART_RXD
+
+
+# Memory Interface to U9: IS61WV6416BLL
+
+set_io --warn-no-port mem_addr[0]   N2  # IO21B
+set_io --warn-no-port mem_addr[1]   K5  # IO20A
+set_io --warn-no-port mem_addr[2]   J5  # IO13A
+set_io --warn-no-port mem_addr[3]   M5  # IO25B
+set_io --warn-no-port mem_addr[4]   P4  # IO54
+set_io --warn-no-port mem_addr[5]   N5  # IO56
+set_io --warn-no-port mem_addr[6]   P5  # IO58
+set_io --warn-no-port mem_addr[7]   P7  # IO77
+set_io --warn-no-port mem_addr[8]   M6  # IO22A
+set_io --warn-no-port mem_addr[9]   P6  # IO67
+set_io --warn-no-port mem_addr[10]  T8  # IO76
+set_io --warn-no-port mem_addr[11]  T1  # IO53
+set_io --warn-no-port mem_addr[12]  P2  # IO25A
+set_io --warn-no-port mem_addr[13]  R1  # IO26A
+set_io --warn-no-port mem_addr[14]  N3  # IO23B
+set_io --warn-no-port mem_addr[15]  P1  # IO24A
+
+set_io --warn-no-port mem_data[0]   T2  # IO57
+set_io --warn-no-port mem_data[1]   R3  # IO59
+set_io --warn-no-port mem_data[2]   T3  # IO61
+set_io --warn-no-port mem_data[3]   R4  # IO63
+set_io --warn-no-port mem_data[4]   R5  # IO60
+set_io --warn-no-port mem_data[5]   T5  # IO69
+set_io --warn-no-port mem_data[6]   R6  # IO71
+set_io --warn-no-port mem_data[7]   T6  # IO73
+set_io --warn-no-port mem_data[8]   N4  # IO26B
+set_io --warn-no-port mem_data[9]   M4  # IO24B
+set_io --warn-no-port mem_data[10]  L6  # IO19A
+set_io --warn-no-port mem_data[11]  M3  # IO22B
+set_io --warn-no-port mem_data[12]  L4  # IO17A
+set_io --warn-no-port mem_data[13]  L3  # IO19B
+set_io --warn-no-port mem_data[14]  K4  # IO18A
+set_io --warn-no-port mem_data[15]  K3  # IO16B
+
+set_io --warn-no-port n_mem_CE      M7  # IO64
+set_io --warn-no-port n_mem_WE      T7  # IO75
+set_io --warn-no-port n_mem_OE      L5  # IO23A
+set_io --warn-no-port n_mem_LB      J4  # IO12A
+set_io --warn-no-port n_mem_UB      J3  # IO14A

@@ -22,8 +22,8 @@ help:
 	@echo "make clean             remove output files"
 	@echo
 
-top.blif: top.v pll_config.v spi.v ws2812b_out.v
-	yosys -p 'synth_ice40 -blif top.blif' top.v pll_config.v spi.v ws2812b_out.v > yosys.out
+top.blif: top.v pll_config.v spi.v ws2812b_out.v memory.v
+	yosys -p 'synth_ice40 -blif top.blif' top.v pll_config.v spi.v ws2812b_out.v memory.v > yosys.out
 	sed "/Warning/p" -n < yosys.out > yosys.warnings
 	cat yosys.warnings
 
@@ -31,7 +31,7 @@ top.asc: top.blif icoboard.pcf
 	arachne-pnr -d 8k -p icoboard.pcf -o top.asc top.blif
 
 top.bin: top.asc
-	icetime -d hx8k -c 75 top.asc
+	icetime -d hx8k -c 68 top.asc
 	icepack top.asc top.bin
 
 prog_sram: top.bin
