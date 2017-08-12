@@ -6,6 +6,11 @@ else
 SSH_RASPI ?= sh -c
 endif
 
+FILE=top
+MODULE=top
+DEPS=spi.v ws2812b_out.v ws2812b_out_parallel.v memory.v bram.v clock.v
+PLL=pll_config.v
+
 help:
 	@echo
 	@echo "make top.blif      run synthesis, generate BLIF netlist"
@@ -21,25 +26,35 @@ help:
 	@echo
 	@echo "make clean             remove output files"
 	@echo
+	@echo "make show FILE=top     show diagram for top.v"
+	@echo "make sim FILE=top      run test bench top_tb.v on top.v"
+	@echo "make verify            formaly verify project"
+	@echo "make verify_module FILE=spi MODULE=spi_slave"
+	@echo "                       formaly verify module spi_slave in spi.v"
+	@echo
+	@echo "make set pin=40 value=1  set raspbery Pi pin 40 to 1"
+	@echo "make send hex=\"FF FF\"  send list of bytes to icoboard over spi"
+	@echo
 
-top.blif: top.v pll_config.v spi.v ws2812b_out.v memory.v
-	yosys -p 'synth_ice40 -blif top.blif' top.v pll_config.v spi.v ws2812b_out.v memory.v > yosys.out
+
+$(FILE).blif: $(FILE).v $(DEPS) $(PLL)
+	yosys -p 'synth_ice40 -blif $(FILE).blif' $(FILE).v $(DEPS) $(PLL) > yosys.out
 	sed "/Warning/p" -n < yosys.out > yosys.warnings
 	cat yosys.warnings
 
-top.asc: top.blif icoboard.pcf
-	arachne-pnr -d 8k -p icoboard.pcf -o top.asc top.blif
+$(FILE).asc: $(FILE).blif icoboard.pcf
+	arachne-pnr -d 8k -p icoboard.pcf -o $(FILE).asc $(FILE).blif
 
-top.bin: top.asc
-	icetime -d hx8k -c 68 top.asc
-	icepack top.asc top.bin
+$(FILE).bin: $(FILE).asc
+	icetime -d hx8k -c 38 $(FILE).asc
+	icepack $(FILE).asc $(FILE).bin
 
-prog_sram: top.bin
+prog_sram: $(FILE).bin
 	cat yosys.warnings
-	$(SSH_RASPI) 'icoprog -p' < top.bin
+	$(SSH_RASPI) 'icoprog -p' < $(FILE).bin
 
-prog_flash: top.bin
-	$(SSH_RASPI) 'icoprog -f' < top.bin
+prog_flash: $(FILE).bin
+	$(SSH_RASPI) 'icoprog -f' < $(FILE).bin
 
 prog_erase:
 	$(SSH_RASPI) 'icoprog -e'
@@ -50,19 +65,48 @@ reset_halt:
 reset_boot:
 	$(SSH_RASPI) 'icoprog -b'
 
-show:	top.v
-	yosys -p 'show -stretch top' top.v
-#	yosys -p 'show -stretch top' spi.v
-#	yosys -p 'show -stretch top' ws2812b_out.v
-#	yosys -p 'show -format ps -viewer gv' top.v
+show:    $(FILE).v
+	yosys -p 'show -stretch $(MODULE)' $(FILE).v
+#	yosys -p 'show -stretch $(FILE)' spi.v
+#	yosys -p 'show -stretch $(FILE)' ws2812b_out.v
+#	yosys -p 'show -format ps -viewer gv' $(FILE).v
 
-sim: spi_tb.v spi.v $(DEPS)
-	iverilog -s testbench -o testbench.vvp top_tb.v top.v
-	vvp testbench.vvp -lxt2
-	gtkwave testbench.vcd testbench.gtkw &
+sim: $(FILE)_tb.v $(FILE).v $(DEPS)
+	iverilog -s testbench -o testbench.vvp $(FILE)_tb.v $(FILE).v $(DEPS)
+	vvp testbench.vvp -lxt2 > $(FILE)_tb.out
+	cat $(FILE)_tb.out
+	gtkwave testbench.vcd $(FILE)_tb.gtkw &
+
+verify_module: $(FILE).v $(DEPS)
+	yosys -ql $(FILE).yslog \
+	      -p 'read_verilog -formal $(FILE).v $(DEPS)' \
+	      -p 'prep -top $(MODULE) -nordff' \
+	      -p 'write_smt2 $(FILE).smt2'
+	yosys-smtbmc --dump-vcd $(FILE).vcd -c $(FILE).smt2 && \
+	yosys-smtbmc --dump-vcd $(FILE).vcd -t 30 $(FILE).smt2 && \
+	yosys-smtbmc --dump-vcd $(FILE).vcd -it 30 $(FILE).smt2 || \
+	gtkwave $(FILE).vcd
+
+verify:
+	make verify_module FILE=spi MODULE=spi_slave
+
+spisrv: spi_server.c
+	$(SSH_RASPI) "g++ -lwiringPi -o spi_server -x c++ -" < spi_server.c
+	$(SSH_RASPI) "./spi_server"
+
+spi:
+	$(SSH_RASPI) "./spi_server"
+
+# example call: make send hex="FF FF"
+send:
+	cat spi_tx.py | $(SSH_RASPI) python - $(hex)
+
+# example call: make set pin=40 value=1
+set:
+	cat gpio_set.py | $(SSH_RASPI) python - $(pin) $(value)
 
 clean:
-	rm top.blif top.asc top.bin
+	rm $(FILE).blif $(FILE).asc $(FILE).bin $(FILE).smt2 $(FILE).vdc $(FILE).yslog
 
 .PHONY: prog_sram prog_flash reset_halt reset_boot clean
 
