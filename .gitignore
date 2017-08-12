@@ -2,3 +2,10 @@
 *.bin
 *.blif
 yosys.*
+*.yslog
+*.vcd
+*.smt2
+*.vvp
+*.vcd
+*.gtkw
+*.out

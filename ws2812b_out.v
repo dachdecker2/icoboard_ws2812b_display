@@ -1,4 +1,27 @@
 
+/**************************************************************\
+*
+*  WS2812 LED controll module
+*
+*  Parameters:
+*    CYCLES_SHORT clk cycles for the 400 ns duration
+*    CYCLES_LONG  clk cycles for the 800 ns duration
+*    CYCLES_RET   clk cycles for the wait time after
+*                 clocking the bits out
+*
+*  inputs:
+*    clk                  clock signal
+*    resetn               reset signal (low active)
+*    bitstream_available  in idle state trigger clocking
+*                         out the bitstream supplied
+*    bitstream            the bitstream to be clocked out
+*
+*  outputs:
+*    bitstream_read  bitstream has been read and may be updated
+*    ws2811_data     the actual output to control the ws2811 LEDs
+*    debug_info
+*
+\**************************************************************/
 
 module ws2812b_out_module (
     input            clk,
@@ -22,7 +45,6 @@ module ws2812b_out_module (
     reg  [CYCLES_WIDTH-1:0] counter = 0;    // 0 .. CYCLES_RET
     reg  [23:0] bitstream_int; // internal copy of the txed LED data
 
-    wire [3:0] debug_info;
     reg  [0:0] idle = 0;
 
     always @(posedge clk) begin
