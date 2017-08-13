@@ -24,13 +24,14 @@ help:
 	@echo "make reset_halt        stop FPGA and keep in reset"
 	@echo "make reset_boot        (re)start FPGA from serial flash"
 	@echo
-	@echo "make clean             remove output files"
-	@echo
-	@echo "make show FILE=top     show diagram for top.v"
+	@echo "make show FILE=top MODULE=mod"
+	@echo "                       show diagram for module mod within top.v"
 	@echo "make sim FILE=top      run test bench top_tb.v on top.v"
 	@echo "make verify            formaly verify project"
 	@echo "make verify_module FILE=spi MODULE=spi_slave"
 	@echo "                       formaly verify module spi_slave in spi.v"
+	@echo
+	@echo "make clean             remove output files"
 	@echo
 	@echo "make set pin=40 value=1  set raspbery Pi pin 40 to 1"
 	@echo "make send hex=\"FF FF\"  send list of bytes to icoboard over spi"
