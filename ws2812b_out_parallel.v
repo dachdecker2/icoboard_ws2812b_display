@@ -24,7 +24,12 @@
 *
 \**************************************************************/
 
-module ws2812b_out_parallel_module (
+module ws2812b_out_parallel_module #(
+    parameter STRIPECOUNT =      2, // number of parallel stripes
+    parameter CYCLES_SHORT =     3, //  ~0,44 us @ 9 MHz
+    parameter CYCLES_LONG =      9, //  ~0,66 us @ 9 MHz
+    parameter CYCLES_RET =       0  //  450 would be 50,0 us @ 9 MHz
+    ) (
     input                        clk,
     input                        resetn,
     input                        bitstream_available,
@@ -33,11 +38,6 @@ module ws2812b_out_parallel_module (
     output reg [STRIPECOUNT-1:0] ws2812b_data,
     output reg [3:0]             debug_info
 );
-
-    parameter STRIPECOUNT  =   1; // number of parallel stripes
-    parameter CYCLES_SHORT =   3; //  ~0,44 us @ 9 MHz
-    parameter CYCLES_LONG  =   5; //  ~0,66 us @ 9 MHz
-    parameter CYCLES_RET   = 450; //  50,0  us @ 9 MHz
 
     // obtain the highest number of cycles of CYCLES_LONG or CYCLES_RET
     // for the number of bits needed for the respect counter
@@ -54,9 +54,7 @@ module ws2812b_out_parallel_module (
                                //       short1 + long0 for 0
     reg  [CYCLES_WIDTH-1:0] counter = 0;    // 0 .. 2**CYCLES_WIDTH-1
     reg  [STRIPECOUNT*24-1:0] bitstream_int; // internal copy of the to be txed LED data
-    reg  [0:0] idle = 1;
-
-//    wire [3:0] debug_info;
+    reg  [$clog2(STRIPECOUNT):0] i;
 
     always @(posedge clk) begin
         if (!resetn) begin
@@ -87,12 +85,14 @@ module ws2812b_out_parallel_module (
                     if (bitstate == 0) begin
                         ws2812b_data <= STRIPECOUNT*{1'b1};
                     end else if (bitstate == 1) begin
-                        ws2812b_data <= bitstream_int[STRIPECOUNT:0];
+                        for (i = 0; i < STRIPECOUNT; i = i+1) begin
+                            ws2812b_data[i] <= bitstream_int[24*i];
+                        end
                     end else if (bitstate == 2) begin
                         ws2812b_data <= STRIPECOUNT*{1'b0};
                         bitnum   <= bitnum - 1;
                         bitstate <= 0;
-                        bitstream_int <= {bitstream_int[23:0], bitstream_int[STRIPECOUNT*24-1:24]};
+                        bitstream_int <= {1'b0, bitstream_int[STRIPECOUNT*24-1:1]};
                         if (! bitnum) counter <= CYCLES_RET;
                     end
                 end
@@ -100,6 +100,5 @@ module ws2812b_out_parallel_module (
         end
     end
 
-//    assign debug_info = {bitstream_read, bitstream_available, resetn, clk};
-    assign debug_info = {ws2812b_data, bitstream_read, bitstream_available, clk};
+    assign debug_info = {ws2812b_data, bitstream_read, bitstream_available};
 endmodule
