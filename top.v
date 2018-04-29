@@ -7,13 +7,13 @@ module top (
     output reg led1, led2, led3, pmod1_1, pmod1_2,
                pmod4_1, pmod4_2, pmod4_3, pmod4_4,
                pmod4_9, pmod4_10, pmod4_11, pmod4_12,
-               mem_addr
+               
 //    output reg [31:0] P6,
 //    output reg [31:0] P8,
     // memory interface to SRAM on back side of the board
-/*    output n_mem_CE, n_mem_WE, n_mem_OE, n_mem_LB, n_mem_UB,
-    output [15:0] mem_addr,
-    output [15:0] mem_data  // set to IO by SB_IO primitive */
+//    output n_mem_CE, n_mem_WE, n_mem_OE, n_mem_LB, n_mem_UB,
+    output [15:0] mem_data
+//    output [15:0] mem_data  // set to IO by SB_IO primitive */
     );
 
 
@@ -121,19 +121,9 @@ module top (
 
 
 // ws2812b output
-/*    localparam LEDCOUNT = 36;
-    reg  [LEDCOUNT-1:0] red   = 36'b1000_10000001_10000001_10000001_10000001;
-    reg  [LEDCOUNT-1:0] green = 36'b1000_00000000_00000000_00000000_00000000;
-    reg  [LEDCOUNT-1:0] blue  = 36'b1000_00000000_00000000_00000000_00000000;// */
-    localparam STRIPE_COUNT = 2;
-    localparam LEDCOUNT = 121;
-    reg  [LEDCOUNT-1:0] red   = 121'b0_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000100;
-    reg  [LEDCOUNT-1:0] green = 121'b0_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000010;
-    reg  [LEDCOUNT-1:0] blue  = 121'b0_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000001; // */
-    reg  [LEDCOUNT-1:0] red_int;
-    reg  [LEDCOUNT-1:0] green_int;
-    reg  [LEDCOUNT-1:0] blue_int;
-    reg  [6:0] LED_counter = 0;
+    localparam STRIPE_COUNT = 3;
+    localparam LEDCOUNT = 2;
+    reg  [$clog2(LEDCOUNT)-1:0] LED_counter = 0;
     wire [0:0] bitstream_read;
     reg  [0:0] bitstream_available = 0;
     reg  [0:0] start = 0;
@@ -167,11 +157,6 @@ module top (
                 addr_out <= next_byte_to_read;
                 bitstream <= {bitstream[24*STRIPE_COUNT-1:8], data_out};
 
-
-                // rotate internal copies of the respect color
-                red_int   <= {red_int[0],   red_int[LEDCOUNT-1:1]};
-                green_int <= {green_int[0], green_int[LEDCOUNT-1:1]};
-                blue_int  <= {blue_int[0],  blue_int[LEDCOUNT-1:1]};
                 // build bitstream for next LED
 /*                bitstream <= 2*{2'b0, green_int[0], 5'b0,
                                 2'b0, red_int[0],   5'b0,
@@ -181,10 +166,6 @@ module top (
                 // after sending all LEDs wait for the fps_clk signal
                 LED_counter <= LEDCOUNT;
                 start       <= 1;
-                red_int     <= red;
-                green_int   <= green;
-                blue_int    <= blue;
-                {red, green, blue} <= {red[LEDCOUNT-2:0], green, blue, red[LEDCOUNT-1]};
             end
         end
     end
@@ -196,7 +177,7 @@ module top (
         .STRIPECOUNT  (STRIPE_COUNT),
         .CYCLES_SHORT (FCLK/2500000), //  ~0.4 us
         .CYCLES_LONG  (FCLK/1250000), //  ~0.8 us
-        .CYCLES_RET   (0))            // ~50 us, clk_fps will do this job
+        .CYCLES_RET   (0))           // ~50 us, but realized using clk_fps
     ws2812b_out_inst (
                      .clk                 (clk),
                      .resetn              (resetn),
@@ -264,7 +245,7 @@ module top (
                 data_in  <= spi_value;
                 addr_in  <= addr_in + 1;
             end else if (spi_timeout) begin
-                addr_in    <= 0;
+                addr_in    <= 2**ADDR_WIDTH-1;
             end
 
             // external SRAM variant
@@ -312,9 +293,15 @@ module top (
                    );
 
     reg [7:0] last_spi_value;
+    reg [0:0] ram_read_step;
     always @(posedge clk) begin
-        if (spi_done) begin
-            last_spi_value <= spi_value;
+        if (fps_clk) begin
+            // alternatively writing to RAM and output from there
+            addr_out <= 0;
+            ram_read_step <= 1;
+        end
+        if (ram_read_step == 1) begin
+            last_spi_value <= data_out;
         end
     end
 
@@ -342,7 +329,8 @@ module top (
 //             r_done || w_done, rpi_ice_mosi, rpi_ice_clk, resetn};
 //             pmod1_1, rpi_ice_mosi, rpi_ice_clk, resetn};
              pmod1_1, rpi_ice_mosi, rpi_ice_clk, rpi_ice_ss};
-    assign mem_addr = {8'h00, last_spi_value};
+    assign mem_data = {8'b0, last_spi_value};
+//    assign {n_mem_CE, n_mem_WE, n_mem_LB, n_mem_UB, n_mem_OE} = {last_spi_value[4:0]};
 
     // assign pins to value of leds
 //    assign {led3, led2, led1} = {rpi_ice_ss, rpi_ice_ss, fps_clk};

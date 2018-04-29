@@ -13,28 +13,36 @@ PLL=pll_config.v
 
 help:
 	@echo
+	@echo " === build targets ==="
 	@echo "make top.blif      run synthesis, generate BLIF netlist"
 	@echo "make top.asc       run place and route, generate IceStorm ASCII file"
 	@echo "make top.bin       run timing analysis, generate iCE40 BIN file"
 	@echo
-	@echo "make prog_sram         FPGA SRAM programming, (re)starts FPGA from SRAM"
-	@echo "make prog_flash        serial flash programming, does not touch FPGA"
-	@echo "make prog_erase        erase first flash block"
+	@echo " === programming targets ==="
+	@echo "make prog_sram     FPGA SRAM programming, (re)starts FPGA from SRAM"
+	@echo "make prog_flash    serial flash programming, does not touch FPGA"
+	@echo "make prog_erase    erase first flash block"
 	@echo
-	@echo "make reset_halt        stop FPGA and keep in reset"
-	@echo "make reset_boot        (re)start FPGA from serial flash"
+	@echo " === FPGA control targets ==="
+	@echo "make reset_halt    stop FPGA and keep in reset"
+	@echo "make reset_boot    (re)start FPGA from serial flash"
 	@echo
+	@echo " === simulation/verification targets ==="
 	@echo "make show FILE=top MODULE=mod"
-	@echo "                       show diagram for module mod within top.v"
-	@echo "make sim FILE=top      run test bench top_tb.v on top.v"
-	@echo "make verify            formaly verify project"
+	@echo "                   show diagram for module mod within top.v"
+	@echo "make sim FILE=top  run test bench top_tb.v on top.v"
+	@echo "make verify        formaly verify project"
 	@echo "make verify_module FILE=spi MODULE=spi_slave"
-	@echo "                       formaly verify module spi_slave in spi.v"
+	@echo "                   formaly verify module spi_slave in spi.v"
 	@echo
-	@echo "make clean             remove output files"
+	@echo " === clean target ==="
+	@echo "make clean         remove output files"
 	@echo
-	@echo "make set pin=40 value=1  set raspbery Pi pin 40 to 1"
-	@echo "make send hex=\"FF FF\"  send list of bytes to icoboard over spi"
+	@echo " === host control target ==="
+	@echo "make set pin=40 value=1"
+	@echo "                   set raspbery Pi pin 40 to 1"
+	@echo "make send hex=\"FF FF\""
+	@echo "                   send list of bytes to icoboard over spi"
 	@echo
 
 
@@ -89,7 +97,8 @@ verify_module: $(FILE).v $(DEPS)
 	gtkwave $(FILE).vcd
 
 verify:
-	make verify_module FILE=spi MODULE=spi_slave
+	make verify_module MODULE=spi_slave
+	make verify_module MODULE=clk_gen
 
 spisrv: spi_server.c
 	$(SSH_RASPI) "g++ -lwiringPi -o spi_server -x c++ -" < spi_server.c

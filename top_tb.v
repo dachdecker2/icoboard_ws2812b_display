@@ -1,4 +1,6 @@
+// synthesis translate_off
 `timescale 1us/100ns
+// synthesis translate_on
 
 module testbench ();
 

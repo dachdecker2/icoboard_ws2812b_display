@@ -74,41 +74,42 @@ set_io --warn-no-port pmod4_12  T15  # IO109
 
 
 # Memory Interface to U9: IS61WV6416BLL
-# pinout matching to icoboard rev 1 beta
-set_io --warn-no-port mem_addr[0]   L7  # IO21A
-set_io --warn-no-port mem_addr[1]   L5  # IO23A
-set_io --warn-no-port mem_addr[2]   L6  # IO19A
-set_io --warn-no-port mem_addr[3]   K3  # IO16B
-set_io --warn-no-port mem_addr[4]   L4  # IO17A
-set_io --warn-no-port mem_addr[5]   L3  # IO19B
-set_io --warn-no-port mem_addr[6]   M4  # IO24B
-set_io --warn-no-port mem_addr[7]   N4  # IO26B
-set_io --warn-no-port mem_addr[8]   N3  # IO23B
-set_io --warn-no-port mem_addr[9]   P6  # IO67
-set_io --warn-no-port mem_addr[10]  P4  # IO54
-set_io --warn-no-port mem_addr[11]  M1  # IO18B
-set_io --warn-no-port mem_addr[12]  M2  # IO20B
-set_io --warn-no-port mem_addr[13]  L1  # IO17B
-set_io --warn-no-port mem_addr[14]  K1  # IO16A
-set_io --warn-no-port mem_addr[15]  J2  # IO15A
+# pinout matching to icoboard rev 1 beta, verified to work
+#set_io --warn-no-port mem_addr[0]   L7  # IO21A
+#set_io --warn-no-port mem_addr[1]   L5  # IO23A
+#set_io --warn-no-port mem_addr[2]   L6  # IO19A
+#set_io --warn-no-port mem_addr[3]   K3  # IO16B
+#set_io --warn-no-port mem_addr[4]   L4  # IO17A
+#set_io --warn-no-port mem_addr[5]   L3  # IO19B
+#set_io --warn-no-port mem_addr[6]   M4  # IO24B
+#set_io --warn-no-port mem_addr[7]   N4  # IO26B
+#set_io --warn-no-port mem_addr[8]   N3  # IO23B
+#set_io --warn-no-port mem_addr[9]   P6  # IO67
+#set_io --warn-no-port mem_addr[10]  P4  # IO54
+#set_io --warn-no-port mem_addr[11]  M1  # IO18B
+#set_io --warn-no-port mem_addr[12]  M2  # IO20B
+#set_io --warn-no-port mem_addr[13]  L1  # IO17B
+#set_io --warn-no-port mem_addr[14]  K1  # IO16A
+#set_io --warn-no-port mem_addr[15]  J2  # IO15A
 
-#set_io --warn-no-port mem_data[0]   N2  # IO21B
-#set_io --warn-no-port mem_data[1]   P1  # IO24A
-#set_io --warn-no-port mem_data[2]   P2  # IO25A
-#set_io --warn-no-port mem_data[3]   R1  # IO26A
-#set_io --warn-no-port mem_data[4]   N5  # IO56
-#set_io --warn-no-port mem_data[5]   P7  # IO77
-#set_io --warn-no-port mem_data[6]   P5  # IO58
-#set_io --warn-no-port mem_data[7]   R4  # IO63
-#set_io --warn-no-port mem_data[8]   J4  # IO12A
-#set_io --warn-no-port mem_data[9]   J3  # IO14A
-#set_io --warn-no-port mem_data[10]  P8  # IO72
-#set_io --warn-no-port mem_data[11]  R6  # IO71
-#set_io --warn-no-port mem_data[12]  R5  # IO60
-#set_io --warn-no-port mem_data[13]  M8  # IO68
-#set_io --warn-no-port mem_data[14]  N7  # IO66
-#set_io --warn-no-port mem_data[15]  M7  # IO64
+set_io --warn-no-port mem_data[0]   N2  # IO21B
+set_io --warn-no-port mem_data[1]   P1  # IO24A
+set_io --warn-no-port mem_data[2]   P2  # IO25A
+set_io --warn-no-port mem_data[3]   R1  # IO26A
+set_io --warn-no-port mem_data[4]   N5  # IO56
+set_io --warn-no-port mem_data[5]   P7  # IO77
+set_io --warn-no-port mem_data[6]   P5  # IO58
+set_io --warn-no-port mem_data[7]   R4  # IO63
+set_io --warn-no-port mem_data[8]   J4  # IO12A
+set_io --warn-no-port mem_data[9]   J3  # IO14A
+set_io --warn-no-port mem_data[10]  P8  # IO72
+set_io --warn-no-port mem_data[11]  R6  # IO71
+set_io --warn-no-port mem_data[12]  R5  # IO60
+set_io --warn-no-port mem_data[13]  M8  # IO68
+set_io --warn-no-port mem_data[14]  N7  # IO66
+set_io --warn-no-port mem_data[15]  M7  # IO64
 
+# verified to work
 #set_io --warn-no-port n_mem_CE      M3  # IO22B
 #set_io --warn-no-port n_mem_WE      R3  # IO59
 #set_io --warn-no-port n_mem_OE      M5  # IO25B
